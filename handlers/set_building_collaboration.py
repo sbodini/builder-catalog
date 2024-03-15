@@ -1,6 +1,7 @@
 from collections import defaultdict, Counter
 
-import common
+from helpers import common
+
 
 def combine_users_collections(specific_user_data, user_complete_data):
     specific_user_collection_dict = common.map_user_collection_to_dict(specific_user_data)
@@ -15,6 +16,7 @@ def combine_users_collections(specific_user_data, user_complete_data):
         user_collection_piece = value[1]
         union_dict[key] = dict(Counter(specific_user_collection_piece) + Counter(user_collection_piece))
     return union_dict
+
 
 def users_collaboration_for_sets(username, set_name):
     compatible_users = []
@@ -34,13 +36,15 @@ def users_collaboration_for_sets(username, set_name):
     if not set_details:
         return []
     for user_complete_data in users_complete_data:
-        if user_complete_data.get("username") != username and not user_complete_data.get("id") == specific_user_data.get("id"):
+        if user_complete_data.get("username") != username and not user_complete_data.get(
+                "id") == specific_user_data.get("id"):
             combined_collections_dict = combine_users_collections(specific_user_data, user_complete_data)
             if common.user_has_all_pieces(set_details.get("pieces"), combined_collections_dict):
                 compatible_users.append(user_complete_data.get("username"))
-    return compatible_users
+    payload = {"compatible_users": compatible_users}
+    return payload
 
 
 if __name__ == "__main__":
-     compatible_users = users_collaboration_for_sets("landscape-artist", "tropical-island")
-     print(compatible_users) #spaceman77
+    compatible_users_response = users_collaboration_for_sets("landscape-artist", "tropical-island")
+    print(compatible_users_response)

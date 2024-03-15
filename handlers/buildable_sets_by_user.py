@@ -1,4 +1,4 @@
-import common
+from helpers import common
 
 
 def get_user_buildable_sets(username):
@@ -15,9 +15,15 @@ def get_user_buildable_sets(username):
         if set_overview.get("id") and set_overview.get("totalPieces") <= user_brick_count:
             set_details = common.get_set_details_by_id(set_overview.get("id"))
             if common.user_has_all_pieces(set_details.get("pieces"), user_collection_dict):
-                sets_user_can_build.append(set_overview)
+                sets_user_can_build.append(set_overview.get("name"))
     return sets_user_can_build
 
+
+def create_buildable_sets_response(username):
+    payload = {"sets": get_user_buildable_sets(username)}
+    return payload
+
+
 if __name__ == "__main__":
-     buildable_sets = get_user_buildable_sets("brickfan35")
-     print(buildable_sets) # the answer is 3 sets: car-wash, castaway and undersea-monster
+    buildable_sets = create_buildable_sets_response("brickfan35")
+    print(buildable_sets)

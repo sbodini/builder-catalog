@@ -1,31 +1,10 @@
 import requests
-from requests.adapters import HTTPAdapter
-from urllib3.util import Retry
 
 API_URL = "https://d16m5wbro86fg2.cloudfront.net/api"
 
 
-def requests_retry_session(
-        retries=3,
-        backoff_factor=0.3,
-        status_forcelist=(500, 502, 504),
-        session=None):
-    session = session or requests.Session()
-    retry = Retry(
-        total=retries,
-        read=retries,
-        connect=retries,
-        backoff_factor=backoff_factor,
-        status_forcelist=status_forcelist,
-    )
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
-    return session
-
-
 def get_user_data_by_id(user_id):
-    user_data_response = requests_retry_session().get(
+    user_data_response = requests.Session().get(
         url="{}/user/by-id/{}".format(API_URL, user_id))
     if user_data_response.status_code != 200 or not user_data_response.json():
         print("Error getting user data for user with id {}".format(user_id))
@@ -37,7 +16,7 @@ def get_set_complete_data_by_name(set_name):
     available_sets = get_all_available_sets()
     for available_set in available_sets:
         if available_set.get("name") == set_name:
-            set_details_response = requests_retry_session().get(
+            set_details_response = requests.Session().get(
                 url="{}/set/by-id/{}".format(API_URL, available_set.get("id")))
             if set_details_response.status_code != 200:
                 print("Error getting set details")
@@ -46,7 +25,7 @@ def get_set_complete_data_by_name(set_name):
 
 
 def get_all_available_sets():
-    all_sets_overview_response = requests_retry_session().get(url=("%s/sets" % API_URL))
+    all_sets_overview_response = requests.Session().get(url=("%s/sets" % API_URL))
     if all_sets_overview_response.status_code != 200:
         print("Error getting all sets overview")
         return
@@ -54,7 +33,7 @@ def get_all_available_sets():
 
 
 def get_set_details_by_id(set_id):
-    set_details_response = requests_retry_session().get(
+    set_details_response = requests.Session().get(
         url="{}/set/by-id/{}".format(API_URL, set_id))
     if set_details_response.status_code != 200:
         print("Error getting set details for set with id {}".format(set_id))
@@ -63,7 +42,7 @@ def get_set_details_by_id(set_id):
 
 
 def get_users_complete_data():
-    users_overview_response = requests_retry_session().get(
+    users_overview_response = requests.Session().get(
         url="{}/users".format(API_URL))
     if users_overview_response.status_code != 200:
         print("Error getting users overview")
@@ -77,8 +56,8 @@ def get_users_complete_data():
 
 
 def get_user_complete_data_by_username(username):
-    user_overview_response = requests_retry_session().get(
-        url="{}/user/by-username/{}".format(API_URL, username));
+    user_overview_response = requests.Session().get(
+        url="{}/user/by-username/{}".format(API_URL, username))
     if user_overview_response.status_code != 200:
         print("Error getting user {} overview".format(username))
         return None
@@ -91,7 +70,7 @@ def map_user_collection_to_dict(user_data):
 
 
 def get_set_overview_by_name(set_name):
-    set_overview_response = requests_retry_session().get(
+    set_overview_response = requests.Session().get(
         url="{}/set/by-name/{}".format(API_URL, set_name))
     if set_overview_response.status_code != 200:
         print("No set with name {} found".format(set_name))
