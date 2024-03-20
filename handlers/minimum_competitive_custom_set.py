@@ -28,10 +28,10 @@ def get_minimum_viable_custom_build(username):
         if user_complete_data.get("username") == username:
             specific_user_data = user_complete_data
             break
-    specific_user_collection_dict = common.map_user_collection_to_dict_new(specific_user_data)
+    specific_user_collection_dict = common.map_user_collection_to_dict(specific_user_data)
     for user_complete_data in users_complete_data:
         if not user_complete_data.get("username") == username:
-            user_collection_dict = common.map_user_collection_to_dict_new(user_complete_data)
+            user_collection_dict = common.map_user_collection_to_dict(user_complete_data)
             users_collections_dict.append(user_collection_dict)
     minimum_viable_custom_build_dict = calculate_max_amount_of_bricks_per_color(specific_user_collection_dict,
                                                                                 users_collections_dict)
