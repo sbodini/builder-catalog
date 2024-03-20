@@ -64,11 +64,6 @@ def get_user_complete_data_by_username(username):
     return get_user_data_by_id(user_overview_response.json().get("id"))
 
 
-def map_user_collection_to_dict(user_data):
-    return {collection_entry.get("pieceId"): {variant_entry.get("color"): variant_entry.get("count") for variant_entry in collection_entry.get("variants")} for collection_entry in
-            user_data.get("collection")}
-
-
 def get_set_overview_by_name(set_name):
     set_overview_response = requests.Session().get(
         url="{}/set/by-name/{}".format(API_URL, set_name))
@@ -78,7 +73,7 @@ def get_set_overview_by_name(set_name):
     return set_overview_response.json()
 
 
-def map_user_collection_to_dict_new(user_data):
+def map_user_collection_to_dict(user_data):
     result_map = {}
     for collection_entry in user_data.get("collection"):
         for variant_entry in collection_entry.get("variants"):
@@ -89,9 +84,8 @@ def map_user_collection_to_dict_new(user_data):
 
 def user_has_all_pieces(set_pieces, user_collection_dict):
     for piece in set_pieces:
-        if not user_collection_dict.get(piece.get("part").get("designID")):
-            return False
-        number_of_colored_pieces_in_user_collection = user_collection_dict.get(piece.get("part").get("designID")).get(str(piece.get("part").get("material")))
-        if not number_of_colored_pieces_in_user_collection or number_of_colored_pieces_in_user_collection < piece.get("quantity"):
+        user_collection_piece_color_quantity = user_collection_dict.get(
+            "{}#{}".format(piece.get("part").get("designID"), piece.get("part").get("material")))
+        if not user_collection_piece_color_quantity or user_collection_piece_color_quantity < piece.get("quantity"):
             return False
     return True

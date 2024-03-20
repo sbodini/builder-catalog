@@ -6,16 +6,15 @@ from helpers import common
 def combine_users_collections(specific_user_data, user_complete_data):
     specific_user_collection_dict = common.map_user_collection_to_dict(specific_user_data)
     user_collection_dict = common.map_user_collection_to_dict(user_complete_data)
-    union_dict = {}
-    collections_union = defaultdict(list)
-    for collection_piece in (specific_user_collection_dict, user_collection_dict):
-        for key, value in collection_piece.items():
-            collections_union[key].append(value)
-    for key, value in collections_union.items():
-        specific_user_collection_piece = value[0]
-        user_collection_piece = value[1]
-        union_dict[key] = dict(Counter(specific_user_collection_piece) + Counter(user_collection_piece))
-    return union_dict
+    collections_union = defaultdict(int)
+    for key in specific_user_collection_dict.keys() | user_collection_dict.keys():
+        if specific_user_collection_dict.get(key) and user_collection_dict.get(key):
+            collections_union[key] = specific_user_collection_dict.get(key) + user_collection_dict.get(key)
+        elif specific_user_collection_dict.get(key) and not user_collection_dict.get(key):
+            collections_union[key] = specific_user_collection_dict.get(key)
+        else:
+            collections_union[key] = user_collection_dict.get(key)
+    return collections_union
 
 
 def users_collaboration_for_sets(username, set_name):
